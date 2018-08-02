@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "~/_hajjLayout.cshtml";
+
+    Session["HajjID"] = "1";
+    Page.Title = "Add Group";
+
+    var HajjID = Session["HajjID"];
+    var db = Database.Open("hajjroadDB");
+
+
+
+}
+
+<button type="button" class="btn btn-primary">Import Groups</button>
+<br />
+<br />
+<div class="panel panel-info">
+    <div class="panel-heading">
+
+        <div class="panel-title ">
+            <h3><span class="fa fa-users"></span> &nbsp;&nbsp;&nbsp; Groups </h3>
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Group ID</th>
+                <th>Group Name</th>
+                <th>Group Amount</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+
+            @foreach (var row in db.Query("select * from Groups order by Id desc"))
+            {
+
+                <tr>
+                    <td>@row.GroupID</td>
+                    <td>@row.GroupName</td>
+                    <td>@row.GroupAmount</td>
+                    <td class="text-center"><a href="Groups.cshtml?Edit=@row.Id"><span class="fa fa-edit fa-2x text-primary"></span></a></td>
+                    <td class="text-center"><a href="Groups.cshtml?Del=@row.Id"><span class="fa fa-trash-o fa-2x text-danger"></span></a></td>
+                </tr>
+
+            }
+        </table>
+
+    </div>
+</div>

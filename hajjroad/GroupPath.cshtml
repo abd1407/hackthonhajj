@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/_hajjLayout.cshtml";
+
+    Session["HajjID"] = "1";
+    Page.Title = "Add Group";
+
+    var HajjID = Session["HajjID"];
+    var db = Database.Open("hajjroadDB");
+
+    var hajjRow = db.QuerySingle("select * from Hajjs where HajjID = @0", HajjID);
+
+    if(IsPost)
+    {
+        db.Query("insert into HajjTimeLine(StationID,StartDate,GroupID,Description) VALUES (@0,@1,@2,@3)", Request.Form["StationID"], Request.Form["StartDate"], hajjRow.GroupID, Request.Form["Description"]);
+
+        Response.Redirect("GroupPath.cshtml");
+    }
+
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+
+        <div class="panel-title ">
+            <h3><span class="fa fa-plus"></span> &nbsp;&nbsp;&nbsp; Add Path Step</h3>
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <form method="post">
+
+            <div class="form-group">
+                <label class="font-normal">Station</label>
+                <select name="StationID" class="form-control">
+                    @foreach (var row in db.Query("select * from Stations"))
+            {
+                <option value="@row.StationID">@row.StationName</option>
+    }
+                </select>
+            </div>
+
+            <div class="form-group" id="data_1">
+                <label class="font-normal">Start Date</label>
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="StartDate" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="font-normal">Description</label>
+                <textarea class="form-control" name="Description" rows="3">
+ 
+                </textarea>
+                </div>
+
+                <hr />
+
+                <button name="send" class="btn btn-primary pull-left" type="submit">Add Step</button>
+
+        </form>
+
+        </div>
+    </div>
+
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+
+                <div class="panel-title ">
+                    <h3><span class="fa fa-map"></span> &nbsp;&nbsp;&nbsp; Group Path </h3>
+                </div>
+            </div>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>Station ID</th>
+                        <th>StationType </th>
+                        <th>Station Name</th>
+                        <th>Description</th>
+                        <th>Time</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+
+                    @foreach (var row in db.Query("select * from hajjTimeLine where GroupID = @0 order by StartDate Desc", hajjRow.GroupID))
+                    {
+
+                        var stationRow = db.QuerySingle("select * from stations where StationID = @0", row.StationID);
+                        var stationTypeRow = db.QuerySingle("select * from StationTypes where StationTypeID = @0", stationRow.StationTypeID);
+
+                    <tr>
+                        <td>@row.StationID</td>
+                        <td>@stationTypeRow.StationTitle</td>
+                        <td>@stationRow.StationName</td>
+                        <td>@row.Description</td>
+                        <td>@row.StartDate</td>
+                        <td class="text-center"><a href="Stations.cshtml?Edit=@row.Id"><span class="fa fa-edit fa-2x text-primary"></span></a></td>
+                        <td class="text-center"><a href="Stations.cshtml?Del=@row.Id"><span class="fa fa-trash-o fa-2x text-danger"></span></a></td>
+                    </tr>
+
+                    }
+                </table>
+
+            </div>
+        </div>

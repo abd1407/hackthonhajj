@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/_hajjLayout.cshtml";
+
+    Session["HajjID"] = "1";
+    Page.Title = "Add Group";
+
+    var HajjID = Session["HajjID"];
+    var db = Database.Open("hajjroadDB");
+
+
+
+}
+<div class="panel panel-info">
+    <div class="panel-heading">
+
+        <div class="panel-title ">
+            <h3><span class="fa fa-users"></span> &nbsp;&nbsp;&nbsp; Stations </h3>
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Station ID</th>
+                <th>Station Name</th>
+                <th>Station Location</th>
+                <th>Station City</th>
+                <th>Station Type</th>
+                <th>Station Description</th>
+                <th>Max Capacity</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+
+            @foreach (var row in db.Query("select * from Stations order by Id desc"))
+            {
+
+            <tr>
+                <td>@row.StationID</td>
+                <td>@row.StationName</td>
+                <td>@row.StationLocation</td>
+                <td>@row.StationCity</td>
+                <td>@row.StationTypeID</td>
+                <td>@row.StationDesc</td>
+                <td>@row.MaxAmount</td>
+                <td class="text-center"><a href="Stations.cshtml?Edit=@row.Id"><span class="fa fa-edit fa-2x text-primary"></span></a></td>
+                <td class="text-center"><a href="Stations.cshtml?Del=@row.Id"><span class="fa fa-trash-o fa-2x text-danger"></span></a></td>
+            </tr>
+
+            }
+        </table>
+
+        </div>
+    </div>
